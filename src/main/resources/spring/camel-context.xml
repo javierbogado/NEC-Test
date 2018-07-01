@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring       http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route id="finger_endpoints_Router">
+        <from id="finger_endpoints_From" uri="cxfrs:bean:finger_endpoints?bindingStyle=SimpleConsumer"/>
+            <recipientList id="finger_endpoints_recipientList">
+                <simple>direct:${header.operationName}</simple>
+            </recipientList>
+        </route>
+        <route id="fingerPrint_Router">
+		<from uri="direct:fingerPrint"/>
+			<unmarshal>
+        		<json library="Jackson"  unmarshalTypeName="java.util.Map"/>
+        	</unmarshal>
+        	<bean ref="widgetFinger" method="isFingerPrint"/>
+        	<when>
+        	<simple>${body} == false</simple>
+        		<setHeader headerName="CamelHttpResponseCode"><simple>403</simple></setHeader>
+        	</when>
+        	<marshal>
+        		<json library="Jackson"/>
+        	</marshal>
+		</route>
+    </camelContext>
+</beans>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:camel="http://camel.apache.org/schema/spring"
+    xmlns:cxf="http://camel.apache.org/schema/cxf"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd"
+    xmlns:context="http://www.springframework.org/schema/context">
+
+    <!-- ***CXFrs*** -->
+    <cxf:rsServer address="http://0.0.0.0:8180/nec-test"            id="finger_endpoints" serviceClass="org.nec.test.rest.Fingers">
+        <cxf:providers>
+             <ref bean="providers"/>
+        </cxf:providers>
+    </cxf:rsServer>
+    <bean class="java.util.ArrayList" 												id="providers">
+        <constructor-arg>
+            <list>
+                <ref bean="jsonProvider"/>
+                <ref bean="corsProvider"/>
+            </list>
+        </constructor-arg>
+    </bean>
+    <bean class="org.apache.cxf.jaxrs.provider.json.JSONProvider" 					id="jsonProvider"/>
+	<bean class="org.apache.cxf.rs.security.cors.CrossOriginResourceSharingFilter" 	id="corsProvider" />
+	
+	<!--     Beans/Processors -->
+    <bean class="org.nec.test.bean.WidgetFinger" 									id="widgetFinger"/>
+</beans>
